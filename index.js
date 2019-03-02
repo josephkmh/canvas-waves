@@ -21,12 +21,12 @@ function Wave({
   this.canvas.width = canvas.clientWidth;
   this.canvasHeight = canvas.clientHeight;
   this.canvasWidth = canvas.clientWidth;
+  this.opacity = opacity || 1;
   this.canvas.style.opacity = this.opacity;
   this.ctx = canvas.getContext("2d");
   this.freezeAfter = freezeAfter;
   this.gradient = gradient;
   this.horizontalOffset = horizontalOffset;
-  this.opacity = opacity || 1;
   this.speed = speed;
   this.startFlat = startFlat;
   this.waveAngle = this.toRadians(waveAngle);
