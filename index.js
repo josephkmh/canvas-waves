@@ -1,6 +1,6 @@
 function Wave({
   baseHeight,
-  canvas,
+  parent,
   nodes,
   speed,
   color,
@@ -15,138 +15,139 @@ function Wave({
   wavesVisible,
   waveAngle
 } = {}) {
-  this.baseHeight = baseHeight;
-  this.canvas = canvas;
-  this.canvas.height = canvas.clientHeight;
-  this.canvas.width = canvas.clientWidth;
-  this.canvasHeight = canvas.clientHeight;
-  this.canvasWidth = canvas.clientWidth;
+  this.baseHeight = baseHeight || 0;
+  this.canvas = this.createCanvas(parent);
+  this.canvasHeight = this.canvas.clientHeight;
+  this.canvasWidth = this.canvas.clientWidth;
   this.opacity = opacity || 1;
   this.canvas.style.opacity = this.opacity;
-  this.ctx = canvas.getContext("2d");
-  this.freezeAfter = freezeAfter;
-  this.gradient = gradient;
-  this.horizontalOffset = horizontalOffset;
-  this.speed = speed;
-  this.startFlat = startFlat;
-  this.waveAngle = this.toRadians(waveAngle);
-  this.waveCount = waveCount;
-  this.waveGrows = waveGrows;
-  this.waveHeight = waveHeight;
-  this.wavesVisible = wavesVisible;
-  this.color = color || '#000000';
+  this.ctx = this.canvas.getContext("2d");
+  this.freezeAfter = freezeAfter || false;
+  this.gradient = gradient || false;
+  this.horizontalOffset = horizontalOffset || 0;
+  this.speed = speed || 5000;
+  this.startFlat = startFlat || false;
+  this.waveAngle = this.toRadians(waveAngle) || 0;
+  this.waveCount = waveCount || false;
+  this.waveGrows = waveGrows || false;
+  this.waveHeight = waveHeight || 100;
+  this.wavesVisible = wavesVisible || 1;
+  this.color = color || "#000000";
 
   // Set up initial position of nodes
   let numberOfNodes = nodes || 40;
   this.nodes = [];
   for (let i = 0; i < numberOfNodes; i++) {
-    this
-      .nodes
-      .push({
-        x: (this.canvasWidth / (numberOfNodes - 1) * i),
-        y: this.canvasHeight
-      });
+    this.nodes.push({
+      x: (this.canvasWidth / (numberOfNodes - 1)) * i,
+      y: this.canvasHeight
+    });
   }
   this.spaceBetweenNodes = this.canvasWidth / (this.nodes.length - 1);
 
   // If a gradient was specified, create a linear gradient on the canvas context
   if (gradient) {
-    this.gradient = this
-      .ctx
-      .createLinearGradient(0, this.canvasHeight, this.canvasWidth, this.canvasHeight - this.waveHeight);
-    gradient.forEach(({stop, color}) => {
-      this
-        .gradient
-        .addColorStop(stop, color);
+    this.gradient = this.ctx.createLinearGradient(
+      0,
+      this.canvasHeight,
+      this.canvasWidth,
+      this.canvasHeight - this.waveHeight
+    );
+    gradient.forEach(({ stop, color }) => {
+      this.gradient.addColorStop(stop, color);
     });
   }
+  console.log(this);
 }
 
 Wave.prototype = {
-  timestamp: function () {
+  timestamp: function() {
     return new Date().getTime();
   },
-  updateNodes: function (ms) {
+  updateNodes: function(ms) {
     let progress = ms / this.speed;
-    let radians = ((2 * Math.PI) * progress);
+    let radians = 2 * Math.PI * progress;
 
-    let nodes = this
-      .nodes
-      .map((node, i, nodes) => {
-        let horizontalOffset = 0;
-        if (this.horizontalOffset) {
-          horizontalOffset = this.horizontalOffset * 2 * Math.PI;
-        }
+    let nodes = this.nodes.map((node, i, nodes) => {
+      let horizontalOffset = 0;
+      if (this.horizontalOffset) {
+        horizontalOffset = this.horizontalOffset * 2 * Math.PI;
+      }
 
-        let nodeNumberOffset = (2 * Math.PI * (i / nodes.length) / (1 / this.wavesVisible)) + horizontalOffset;
+      let nodeNumberOffset =
+        (2 * Math.PI * (i / nodes.length)) / (1 / this.wavesVisible) +
+        horizontalOffset;
 
-        let offset = ((Math.sin(radians - nodeNumberOffset) + 1) / 2) * this.waveHeight;
+      let offset =
+        ((Math.sin(radians - nodeNumberOffset) + 1) / 2) * this.waveHeight;
 
-        if (this.waveGrows) 
-          offset = (offset * (i / (nodes.length - 1)) * this.waveGrows);
-        
-        if (this.waveAngle) {
-          offset += (Math.tan(this.waveAngle) * this.spaceBetweenNodes * i);
-        }
-        let yValue = node.y - offset - this.baseHeight;
+      if (this.waveGrows)
+        offset = offset * (i / (nodes.length - 1)) * this.waveGrows;
 
-        if (this.startFlat && progress < (i / nodes.length)) {
-          yValue = node.y - this.baseHeight;
-        }
+      if (this.waveAngle) {
+        offset += Math.tan(this.waveAngle) * this.spaceBetweenNodes * i;
+      }
+      let yValue = node.y - offset - this.baseHeight;
 
-        return {x: node.x, y: yValue}
-      });
+      if (this.startFlat && progress < i / nodes.length) {
+        yValue = node.y - this.baseHeight;
+      }
+
+      return { x: node.x, y: yValue };
+    });
     return nodes;
   },
-  draw: function (nodes) {
-    this
-      .ctx
-      .clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    this
-      .ctx
-      .beginPath();
-    this
-      .ctx
-      .moveTo(0, this.canvasHeight);
+  createCanvas(selector) {
+    const parent = document.querySelector(selector);
+    if (!parent) throw new Error("Parent element could not be found.");
+    if (parent.style.position !== "relative" || "absolute") {
+      parent.style.position = "relative";
+    }
+    const canvas = document.createElement("canvas");
+    canvas.style.position = "absolute";
+    canvas.style.top = "0";
+    canvas.style.left = "0";
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.height = parent.clientHeight;
+    canvas.width = parent.clientWidth;
+    if (parent.children.length !== 0) {
+      parent.appendChild(canvas);
+    } else {
+      parent.insertBefore(canvas, parent.children[0]);
+    }
+    return canvas;
+  },
+  draw: function(nodes) {
+    this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+    this.ctx.beginPath();
+    this.ctx.moveTo(0, this.canvasHeight);
     nodes.forEach((node, i, nodes) => {
-      this
-        .ctx
-        .lineTo(node.x, node.y);
+      this.ctx.lineTo(node.x, node.y);
     });
-    this
-      .ctx
-      .lineTo(this.canvasWidth, this.canvasHeight);
-    this
-      .ctx
-      .lineTo(0, this.canvasHeight);
-    this
-      .ctx
-      .closePath();
+    this.ctx.lineTo(this.canvasWidth, this.canvasHeight);
+    this.ctx.lineTo(0, this.canvasHeight);
+    this.ctx.closePath();
     if (this.gradient) {
       this.ctx.fillStyle = this.gradient;
     } else {
       this.ctx.fillStyle = this.color;
     }
-    this
-      .ctx
-      .fill();
+    this.ctx.fill();
   },
-  toRadians: function (degrees) {
+  toRadians: function(degrees) {
     return degrees * (Math.PI / 180);
   },
-  animate: function () {
+  animate: function() {
     let currentTime = this.timestamp();
-    if (!this.startTime) 
-      this.startTime = currentTime;
+    if (!this.startTime) this.startTime = currentTime;
     let progress = currentTime - this.startTime;
-    if (this.freezeAfter && progress > this.freezeAfter) 
-      return;
-    if (this.waveCount && (progress / this.speed) >= this.waveCount) 
-      return;
+    if (this.freezeAfter && progress > this.freezeAfter) return;
+    if (this.waveCount && progress / this.speed >= this.waveCount) return;
     let nodes = this.updateNodes(progress);
     this.draw(nodes);
     requestAnimationFrame(this.animate.bind(this));
   }
-}
+};
 
 module.exports = Wave;
