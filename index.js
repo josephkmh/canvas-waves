@@ -15,10 +15,10 @@ function Wave({
   wavesVisible,
   waveAngle
 } = {}) {
-  this.baseHeight = baseHeight || 0;
   this.canvas = this.createCanvas(parent);
   this.canvasHeight = this.canvas.clientHeight;
   this.canvasWidth = this.canvas.clientWidth;
+  this.baseHeight = this.setWaveBaseHeight(baseHeight);
   this.opacity = opacity || 1;
   this.canvas.style.opacity = this.opacity;
   this.ctx = this.canvas.getContext("2d");
@@ -147,6 +147,17 @@ Wave.prototype = {
     let nodes = this.updateNodes(progress);
     this.draw(nodes);
     requestAnimationFrame(this.animate.bind(this));
+  },
+  setWaveBaseHeight: function(userInput) {
+    if (!userInput) {
+      return 0;
+    } else if (typeof userInput === "number") {
+      return userInput;
+    } else if (typeof userInput === "string") {
+      const percentage = parseInt(userInput, 10) / 100;
+      console.log(percentage);
+      return this.canvasHeight * percentage;
+    }
   }
 };
 
