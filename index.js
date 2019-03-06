@@ -1,23 +1,23 @@
-function Wave({
-  baseHeight,
-  parent,
-  nodes,
-  speed,
-  color,
-  gradient,
-  freezeAfter,
-  horizontalOffset,
-  startFlat,
-  opacity,
-  waveGrows,
-  waveCount,
-  waveHeight,
-  wavesVisible,
-  waveAngle
-} = {}) {
-  this.canvas = this.createCanvas(parent);
-  this.canvasHeight = this.canvas.clientHeight;
-  this.canvasWidth = this.canvas.clientWidth;
+function Wave(
+  selector,
+  {
+    baseHeight,
+    nodes,
+    speed,
+    color,
+    gradient,
+    freezeAfter,
+    horizontalOffset,
+    startFlat,
+    opacity,
+    waveGrows,
+    waveCount,
+    waveHeight,
+    wavesVisible,
+    waveAngle
+  } = {}
+) {
+  this.canvas = this.createCanvas(selector);
   this.baseHeight = this.userInputToPixelValue(baseHeight, this.canvasHeight);
   this.opacity = opacity || 1;
   this.canvas.style.opacity = this.opacity;
@@ -58,7 +58,6 @@ function Wave({
       this.gradient.addColorStop(stop, color);
     });
   }
-  console.log(this);
 }
 
 Wave.prototype = {
@@ -107,6 +106,8 @@ Wave.prototype = {
     canvas.style.height = "100%";
     canvas.height = parent.clientHeight;
     canvas.width = parent.clientWidth;
+    this.canvasHeight = canvas.clientHeight;
+    this.canvasWidth = canvas.clientWidth;
     if (parent.children.length !== 0) {
       parent.appendChild(canvas);
     } else {
