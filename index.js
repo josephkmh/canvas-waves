@@ -36,7 +36,7 @@ function Wave({
   this.color = color || "#000000";
 
   // Set up initial position of nodes
-  let numberOfNodes = nodes || 40;
+  let numberOfNodes = nodes || Math.floor(this.canvasWidth / 30);
   this.nodes = [];
   for (let i = 0; i < numberOfNodes; i++) {
     this.nodes.push({
