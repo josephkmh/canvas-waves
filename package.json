@@ -9,6 +9,11 @@
   "author": "Joey Marshment-Howell <joey@joeymh.com> (https://joeymh.com)",
   "license": "ISC",
   "devDependencies": {
-    "jest": "^24.1.0"
+    "jest": "^24.1.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.2.3"
+  },
+  "dependencies": {
+    "canvas-prebuilt": "^2.0.0-alpha.14"
   }
 }

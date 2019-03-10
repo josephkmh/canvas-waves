@@ -1,185 +1,159 @@
-function Wave(selector, {
-  baseHeight,
-  nodes,
-  speed,
-  color,
-  gradient,
-  freezeAfter,
-  horizontalOffset,
-  startFlat,
-  opacity,
-  waveGrows,
-  waveCount,
-  waveHeight,
-  wavesVisible,
-  waveAngle
-} = {}) {
-  this.canvas = this.createCanvas(selector);
-  this.baseHeight = this.userInputToPixelValue(baseHeight, this.canvasHeight);
-  this.opacity = opacity || 1;
-  this.canvas.style.opacity = this.opacity;
-  this.ctx = this
-    .canvas
-    .getContext("2d");
-  if (this.gradient) {
-    this.ctx.fillStyle = this.gradient;
-  } else {
-    this.ctx.fillStyle = this.color;
-  }
-  this.freezeAfter = freezeAfter || false;
-  this.gradient = gradient || false;
-  this.horizontalOffset = horizontalOffset
-    ? horizontalOffset * 2 * Math.PI
-    : 0;
-  this.speed = speed || 5000;
-  this.startFlat = startFlat || false;
-  this.waveAngle = this.toRadians(waveAngle) || 0;
-  this.waveCount = waveCount || false;
-  this.waveHeight = this.userInputToPixelValue(waveHeight, this.canvasHeight) || 100;
-  this.waveGrows = waveGrows;
-  this.wavesVisible = wavesVisible || 1;
-  this.color = color || "#000000";
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["CanvasWave"] = factory();
+	else
+		root["CanvasWave"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.js");
+/******/ })
+/************************************************************************/
+/******/ ({
 
-  // Set up initial position of nodes
-  let numberOfNodes = nodes || Math.floor(this.canvasWidth / 30);
-  this.nodes = [];
-  for (let i = 0; i < numberOfNodes; i++) {
-    this
-      .nodes
-      .push({
-        x: (this.canvasWidth / (numberOfNodes - 1)) * i,
-        y: this.canvasHeight,
-        positionMultiplier: i / numberOfNodes,
-        numberOffset: (2 * Math.PI * (i / numberOfNodes)) / (1 / this.wavesVisible) + this.horizontalOffset
-      });
-  }
-  this.spaceBetweenNodes = this.canvasWidth / (this.nodes.length - 1);
+/***/ "./src/Canvas.js":
+/*!***********************!*\
+  !*** ./src/Canvas.js ***!
+  \***********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-  // If a gradient was specified, create a linear gradient on the canvas context
-  if (gradient) {
-    this.gradient = this
-      .ctx
-      .createLinearGradient(0, this.canvasHeight, this.canvasWidth, this.canvasHeight - this.waveHeight);
-    gradient.forEach(({stop, color}) => {
-      this
-        .gradient
-        .addColorStop(stop, color);
-    });
-  }
-}
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\nconst Canvas = ({selector, gradient, color, opacity}) => {\n  const parent = document.querySelector(selector);\n\n  if (!parent) {\n    throw new Error(\"Parent element could not be found.\");\n  }\n\n  if (parent.style.position !== \"relative\" || \"absolute\") {\n    parent.style.position = \"relative\";\n  }\n  const canvas = document.createElement(\"canvas\");\n  canvas.style.position = \"absolute\";\n  canvas.style.top = \"0\";\n  canvas.style.left = \"0\";\n  canvas.style.width = \"100%\";\n  canvas.style.height = \"100%\";\n  canvas.style.opacity = opacity;\n  canvas.height = parent.clientHeight;\n  canvas.width = parent.clientWidth;\n\n  /**\n   * Prepare context for rendering\n   */\n  canvas.ctx = canvas.getContext(\"2d\");\n  if (gradient) {\n    canvas.ctx.fillStyle = gradient;\n  } else {\n    canvas.ctx.fillStyle = color;\n  }\n\n  /**\n   * Add canvas to DOM\n   */\n  if (parent.children.length == 0) {\n    parent.appendChild(canvas);\n  } else {\n    parent.insertBefore(canvas, parent.children[0]);\n  }\n\n  return canvas;\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Canvas);\n\n//# sourceURL=webpack://CanvasWave/./src/Canvas.js?");
 
-Wave.prototype = {
-  timestamp: function () {
-    return new Date().getTime();
-  },
-  updateNodes: function (ms) {
-    let progress = ms / this.speed;
-    let radians = 2 * Math.PI * progress;
+/***/ }),
 
-    let nodes = this
-      .nodes
-      .forEach((node, i, nodes) => {
+/***/ "./src/Node.js":
+/*!*********************!*\
+  !*** ./src/Node.js ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-        if (this.startFlat && progress < nodePositionMultiplier) {
-          node.y = this.canvasHeight - this.baseHeight;
-          return
-        }
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/**\n * A single node on the canvas\n */\nfunction Node({canvasWidth, canvasHeight, index, numberOfNodes, wavesVisible}) {\n\n  /**\n   * Initialize position on the canvas\n   */\n  this.x = (canvasWidth / (numberOfNodes - 1)) * index;\n  this.y = canvasHeight;\n  this.index = index;\n\n  /**\n   * Calculate\n   */\n  this.positionMultiplier = index / numberOfNodes;\n\n  this.numberOffset = (2 * Math.PI * (index / numberOfNodes)) / (1 / wavesVisible);\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Node);\n\n//# sourceURL=webpack://CanvasWave/./src/Node.js?");
 
-        let offset = ((Math.sin(radians - node.numberOffset) + 1) / 2) * this.waveHeight;
+/***/ }),
 
-        if (this.waveGrows) {
-          offset = offset * (i / (nodes.length - 1)) * this.waveGrows;
-        }
-        if (this.waveAngle) {
-          offset += Math.tan(this.waveAngle) * this.spaceBetweenNodes * i;
-        }
-        let yValue = this.canvasHeight - offset - this.baseHeight;
+/***/ "./src/Wave.js":
+/*!*********************!*\
+  !*** ./src/Wave.js ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-        node.y = yValue;
-      });
-    return nodes;
-  },
-  createCanvas(selector) {
-    const parent = document.querySelector(selector);
-    if (!parent) 
-      throw new Error("Parent element could not be found.");
-    if (parent.style.position !== "relative" || "absolute") {
-      parent.style.position = "relative";
-    }
-    const canvas = document.createElement("canvas");
-    canvas.style.position = "absolute";
-    canvas.style.top = "0";
-    canvas.style.left = "0";
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    canvas.height = parent.clientHeight;
-    canvas.width = parent.clientWidth;
-    this.canvasHeight = parent.clientHeight;
-    this.canvasWidth = parent.clientWidth;
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Node_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Node.js */ \"./src/Node.js\");\n/* harmony import */ var _Canvas_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Canvas.js */ \"./src/Canvas.js\");\n\n\n\nfunction Wave(selector, {\n  baseHeight = 0,\n  nodeCount,\n  speed = 10000,\n  color = \"#000000\",\n  gradient = false,\n  freezeAfter = false,\n  horizontalOffset = 0,\n  startFlat = false,\n  opacity = 1,\n  waveGrows = false,\n  waveCount = false,\n  waveHeight = \"15%\",\n  wavesVisible = .5,\n  waveAngle = 0\n} = {}) {\n  this.animating = null;\n  this.freezeAfter = freezeAfter;\n  this.horizontalOffsetTime = horizontalOffset * speed;\n  this.speed = speed;\n  this.startFlat = startFlat;\n  this.startTime;\n  this.waveAngleRadians = waveAngle * (Math.PI / 180);\n  this.waveCount = waveCount;\n  this.waveGrows = waveGrows;\n\n  /**\n   * Set up the canvas & context\n   */\n  this.canvas = Object(_Canvas_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])({selector, gradient, color, opacity});\n\n  const numberOfNodes = nodeCount || Math.floor(this.canvas.width / 30);\n  this.nodes = [];\n  for (let i = 0; i < numberOfNodes; i++) {\n    this\n      .nodes\n      .push(new _Node_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]({numberOfNodes, canvasWidth: this.canvas.width, canvasHeight: this.canvas.height, wavesVisible: wavesVisible, index: i}));\n  }\n  this.spaceBetweenNodes = this.canvas.width / (this.nodes.length - 1);\n\n  /**\n   * Parse user provided values into pixel values (in case a string percentage is provided)\n   */\n  this.pixelWaveHeight = this.userInputToPixelValue(waveHeight, this.canvas.height);\n  this.pixelBaseHeight = this.userInputToPixelValue(baseHeight, this.canvas.height);\n}\n\nWave.prototype = {\n  /**\n   * Animate the wave\n   */\n  animate: function () {\n    // halt execution if animation has been turned off\n    if (this.animating == false) {\n      return;\n    }\n    this.animating = true;\n\n    // stop animation if freezeAfter was set and has been exceeded\n    if (this.freezeAfter && progress > this.freezeAfter) \n      return;\n    \n    // stop animation if waveCount was set and has been exceeded\n    if (this.waveCount && progress / this.speed >= this.waveCount) \n      return;\n    \n    // update nodes, repaint canvas and request next animation frame\n    this.updateNodes();\n    this.draw();\n    requestAnimationFrame(this.animate.bind(this));\n  },\n\n  /**\n   * Draw the current nodes on the canvas context\n   */\n  draw: function () {\n    let ctx = this.canvas.ctx;\n    ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);\n    ctx.beginPath();\n    ctx.moveTo(0, this.canvas.height);\n    this\n      .nodes\n      .forEach(node => {\n        ctx.lineTo(node.x, node.y);\n      });\n    ctx.lineTo(this.canvas.width, this.canvas.height);\n    ctx.lineTo(0, this.canvas.height);\n    ctx.closePath();\n    ctx.fill();\n  },\n\n  /**\n   * Calculate the current progress in radians\n   */\n  getProgressRadians: function () {\n    let currentTime = this.timestamp();\n    if (!this.startTime) {\n      this.startTime = currentTime;\n    }\n    let timeElapsed = (currentTime - this.startTime + this.horizontalOffsetTime) % this.speed;\n    let progress = (timeElapsed / this.speed);\n    return progress * 2 * Math.PI;\n  },\n\n  getProgressPercentage: function () {\n    // calculate the current progress from 0-1\n    let currentTime = this.timestamp();\n    if (!this.startTime) {\n      this.startTime = currentTime;\n    }\n    let timeElapsed = (currentTime - this.startTime + this.horizontalOffsetTime) % this.speed;\n    let progress = (timeElapsed / this.speed);\n    return progress;\n  },\n\n  /**\n   * Return current timestamp\n   */\n  timestamp: () => {\n    return new Date().getTime();\n  },\n\n  /**\n   * Toggle animation of the wave\n   */\n  toggleAnimation: function () {\n    if (!this.animating) {\n      this.animating = true;\n      this.animate();\n    } else {\n      this.horizontalOffsetTime = this.getProgressPercentage() * this.speed;\n      this.startTime = null;\n      this.animating = false;\n    }\n  },\n\n  /**\n   * Update nodes based on current time\n   */\n  updateNodes: function () {\n    let progress = this.getProgressRadians();\n\n    this\n      .nodes\n      .forEach(node => {\n\n        // if (this.startFlat && progress < nodePositionMultiplier) {   node.y =\n        // this.canvasHeight - this.baseHeight;   return }\n\n        let offset = ((Math.sin(progress - node.numberOffset) + 1) / 2) * this.pixelWaveHeight;\n        if (this.waveGrows) {\n          offset = offset * (node.index / (nodes.length - 1)) * this.waveGrows;\n        }\n        if (this.waveAngleRadians) {\n          offset += Math.tan(this.waveAngleRadians) * this.spaceBetweenNodes * node.index;\n        }\n        let yValue = this.canvas.height - offset - this.pixelBaseHeight;\n\n        node.y = yValue;\n      });\n  },\n\n  /**\n   * Convert user input to pixels in case they provide a string specifying a percentage\n   */\n  userInputToPixelValue: (userInput, percentageOf) => {\n    if (!userInput) {\n      return 0;\n    } else if (typeof userInput === \"number\") {\n      return userInput;\n    } else if (typeof userInput === \"string\") {\n      const percentage = parseInt(userInput, 10) / 100;\n      return percentageOf * percentage;\n    }\n  }\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (Wave);\n\n//# sourceURL=webpack://CanvasWave/./src/Wave.js?");
 
-    if (parent.children.length !== 0) {
-      parent.appendChild(canvas);
-    } else {
-      parent.insertBefore(canvas, parent.children[0]);
-    }
-    return canvas;
-  },
-  draw: function () {
-    this
-      .ctx
-      .clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    this
-      .ctx
-      .beginPath();
-    this
-      .ctx
-      .moveTo(0, this.canvasHeight);
-    this
-      .nodes
-      .forEach((node, i, nodes) => {
-        this
-          .ctx
-          .lineTo(node.x, node.y);
-      });
-    this
-      .ctx
-      .lineTo(this.canvasWidth, this.canvasHeight);
-    this
-      .ctx
-      .lineTo(0, this.canvasHeight);
-    this
-      .ctx
-      .closePath();
-    this
-      .ctx
-      .fill();
-  },
-  toRadians: function (degrees) {
-    return degrees * (Math.PI / 180);
-  },
-  animate: function () {
-    let currentTime = this.timestamp();
-    if (!this.startTime) 
-      this.startTime = currentTime;
-    let progress = currentTime - this.startTime;
-    if (this.freezeAfter && progress > this.freezeAfter) 
-      return;
-    if (this.waveCount && progress / this.speed >= this.waveCount) 
-      return;
-    this.updateNodes(progress);
-    this.draw();
-    requestAnimationFrame(this.animate.bind(this));
-  },
-  userInputToPixelValue: function (userInput, percentageOf) {
-    if (!userInput) {
-      return 0;
-    } else if (typeof userInput === "number") {
-      return userInput;
-    } else if (typeof userInput === "string") {
-      const percentage = parseInt(userInput, 10) / 100;
-      return percentageOf * percentage;
-    }
-  }
-};
+/***/ }),
 
-module.exports = Wave;
+/***/ "./src/canvas-waves.js":
+/*!*****************************!*\
+  !*** ./src/canvas-waves.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _Wave__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Wave */ \"./src/Wave.js\");\n\n\nconst CanvasWaves = () => {\n\n  const waves = [];\n\n  const CanvasWave = (selector, options) => {\n    const wave = new _Wave__WEBPACK_IMPORTED_MODULE_0__[\"default\"](selector, options);\n    waves.push(wave);\n    return wave;\n  }\n\n  return CanvasWave;\n}\n\n/* harmony default export */ __webpack_exports__[\"default\"] = (CanvasWaves());\n\n//# sourceURL=webpack://CanvasWave/./src/canvas-waves.js?");
+
+/***/ }),
+
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+eval("const CanvasWaves = __webpack_require__(/*! ./canvas-waves.js */ \"./src/canvas-waves.js\").default;\nmodule.exports = CanvasWaves;\n\n//# sourceURL=webpack://CanvasWave/./src/index.js?");
+
+/***/ })
+
+/******/ });
+});
