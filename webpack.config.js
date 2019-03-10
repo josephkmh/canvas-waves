@@ -1,12 +1,27 @@
 const path = require("path");
 
-module.exports = {
+const serverConfig = {
   entry: "./src/index.js",
+  target: "node",
   output: {
-    filename: "index.js",
-    path: path.resolve(__dirname, ""),
+    filename: "canvas-waves.node.js",
+    path: path.resolve(__dirname, "dist"),
     library: "CanvasWave",
     libraryTarget: "umd"
   },
   mode: "development"
 }
+
+const clientConfig = {
+  entry: "./src/index.js",
+  target: "web",
+  output: {
+    filename: "canvas-waves.js",
+    path: path.resolve(__dirname, "dist"),
+    library: "CanvasWave",
+    libraryTarget: "umd"
+  },
+  mode: "development"
+}
+
+module.exports = [serverConfig, clientConfig];
