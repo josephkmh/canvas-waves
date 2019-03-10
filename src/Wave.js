@@ -159,7 +159,7 @@ Wave.prototype = {
 
         let offset = ((Math.sin(progress - node.numberOffset) + 1) / 2) * this.pixelWaveHeight;
         if (this.waveGrows) {
-          offset = offset * (node.index / (nodes.length - 1)) * this.waveGrows;
+          offset = offset * (node.index / (this.nodes.length - 1)) * this.waveGrows;
         }
         if (this.waveAngleRadians) {
           offset += Math.tan(this.waveAngleRadians) * this.spaceBetweenNodes * node.index;
