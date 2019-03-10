@@ -46,6 +46,12 @@ function Wave(selector, {
    */
   this.pixelWaveHeight = this.userInputToPixelValue(waveHeight, this.canvas.height);
   this.pixelBaseHeight = this.userInputToPixelValue(baseHeight, this.canvas.height);
+
+  /**
+   * Draw initial position of wave
+   */
+  this.updateNodes();
+  this.draw();
 }
 
 Wave.prototype = {
@@ -97,10 +103,11 @@ Wave.prototype = {
    */
   getProgressRadians: function () {
     let currentTime = this.timestamp();
-    if (!this.startTime) {
+    if (!this.startTime && this.animating) {
       this.startTime = currentTime;
     }
-    let timeElapsed = (currentTime - this.startTime + this.horizontalOffsetTime) % this.speed;
+    let startTime = this.startTime || currentTime;
+    let timeElapsed = (currentTime - startTime + this.horizontalOffsetTime) % this.speed;
     let progress = (timeElapsed / this.speed);
     return progress * 2 * Math.PI;
   },
@@ -108,7 +115,7 @@ Wave.prototype = {
   getProgressPercentage: function () {
     // calculate the current progress from 0-1
     let currentTime = this.timestamp();
-    if (!this.startTime) {
+    if (!this.startTime && this.animating) {
       this.startTime = currentTime;
     }
     let timeElapsed = (currentTime - this.startTime + this.horizontalOffsetTime) % this.speed;
