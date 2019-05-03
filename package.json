@@ -5,7 +5,8 @@
   "main": "dist/canvas-waves.node.js",
   "unpkg": "dist/canvas-waves.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "dev": "webpack --w"
   },
   "author": "Joey Marshment-Howell <joey@joeymh.com> (https://joeymh.com)",
   "license": "ISC",
