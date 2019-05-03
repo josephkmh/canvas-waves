@@ -23,7 +23,6 @@ function Wave(
   this.animating = null;
   this.freezeAfter = freezeAfter;
   this.horizontalOffsetTime = horizontalOffset * speed;
-  this.isPaused = false;
   this.speed = speed;
   this.startFlat = startFlat;
   this.startTime;
@@ -112,7 +111,11 @@ Wave.prototype = {
   },
 
   pause: function() {
-    this.isPaused = true;
+    this.animating = false;
+  },
+
+  resume: function() {
+    this.animating = true;
   },
 
   /**
