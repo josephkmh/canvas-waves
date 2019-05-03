@@ -1,10 +1,18 @@
 import Wave from "./Wave";
 
 const CanvasWaves = () => {
-  const waves = [];
+  let waves = [];
+
+  const deregister = wave => {
+    console.log("remove waves with id ", wave.id);
+    waves = waves.filter(w => w.id !== wave.id);
+    console.log(waves);
+  };
 
   const CanvasWave = (selector, options) => {
     const wave = new Wave(selector, options);
+    wave.id = waves.length + 1;
+    wave.deregister = () => deregister(wave);
     waves.push(wave);
     return wave;
   };
