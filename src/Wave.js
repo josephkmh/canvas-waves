@@ -21,6 +21,8 @@ function Wave(
   } = {}
 ) {
   this.animating = null;
+  this.baseHeight = baseHeight;
+  this.color = color;
   this.freezeAfter = freezeAfter;
   this.horizontalOffsetTime = horizontalOffset * speed;
   this.speed = speed;

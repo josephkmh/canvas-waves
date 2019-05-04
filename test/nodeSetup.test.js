@@ -1,4 +1,4 @@
-const Wave = require("../index.js");
+const CanvasWaves = require("./../dist/canvas-waves.node.js");
 window.HTMLCanvasElement.prototype.getContext = () => {
   return {
     clearRect: () => {},
@@ -7,7 +7,7 @@ window.HTMLCanvasElement.prototype.getContext = () => {
     lineTo: () => {},
     closePath: () => {},
     fill: () => {}
-  }
+  };
 };
 
 test("updateNodes with sine wave", () => {
@@ -17,21 +17,18 @@ test("updateNodes with sine wave", () => {
   parent.style.width = "1000px";
   parent.style.height = "1000px";
   parent.style.position = "relative";
-  document
-    .body
-    .appendChild(parent);
-  const wave = new Wave(".parent", {
+  document.body.appendChild(parent);
+  const wave = CanvasWaves.wave(".parent", {
     nodes: 5,
     test: true
   });
-
-  console.log(wave.parent);
 
   expect(wave.nodes).toEqual([
     {
       x: 0,
       y: 0
-    }, {
+    },
+    {
       x: 0,
       y: 0
     }

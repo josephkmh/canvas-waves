@@ -1,2 +1,2 @@
 const CanvasWaves = require("./canvas-waves.js").default;
-module.exports = CanvasWaves;
+module.exports = new CanvasWaves();
