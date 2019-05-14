@@ -120,6 +120,8 @@ Wave.prototype = {
 
   pause: function() {
     this.animating = false;
+    this.horizontalOffsetTime = this.getProgressPercentage() * this.speed;
+    this.startTime = null;
   },
 
   resume: function() {
