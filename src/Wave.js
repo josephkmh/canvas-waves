@@ -76,7 +76,6 @@ Wave.prototype = {
    * Animate the wave
    */
   animate: function() {
-    console.log("animating");
     // halt execution if animation has been turned off
     if (this.animating == false) {
       return;
@@ -125,6 +124,7 @@ Wave.prototype = {
 
   resume: function() {
     this.animating = true;
+    this.animate();
   },
 
   /**
