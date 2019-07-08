@@ -7,6 +7,10 @@ function CanvasWaves() {
     this.waves = this.waves.filter(w => w.id !== wave.id);
   };
 
+  this.clearAll = () => {
+    this.waves.forEach(wave => wave.destroy());
+  };
+
   this.wave = function(selector, options) {
     const wave = new Wave(selector, options);
     wave.id = this.waves.length + 1;

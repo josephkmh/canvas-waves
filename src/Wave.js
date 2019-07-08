@@ -1,5 +1,6 @@
 import Node from "./Node.js";
 import Canvas from "./Canvas.js";
+import { request } from "https";
 
 function Wave(
   selector,
@@ -26,6 +27,7 @@ function Wave(
   this.freezeAfter = freezeAfter;
   this.horizontalOffsetTime = horizontalOffset * speed;
   this.speed = speed;
+  this.speedDecrementInterval = 10;
   this.startFlat = startFlat;
   this.startTime;
   this.waveAngleRadians = waveAngle * (Math.PI / 180);
@@ -77,7 +79,7 @@ Wave.prototype = {
    */
   animate: function() {
     // halt execution if animation has been turned off
-    if (this.animating == false) {
+    if (this.animating === false) {
       return;
     }
     this.animating = true;
@@ -93,6 +95,21 @@ Wave.prototype = {
     this.draw();
     if (this.isPaused) return;
     requestAnimationFrame(this.animate.bind(this));
+  },
+
+  animateWithSlowdown: function() {
+    let currentTime = this.timestamp();
+    if (currentTime > this.stopCompletionTimestamp) {
+      return;
+    }
+    this.horizontalOffsetTime = this.getProgressPercentage() * this.speed;
+    this.startTime = currentTime;
+    this.cyclesSinceStopRequested += 1;
+    this.updateNodes(
+      this.getProgressRadians() + 0.01 * this.cyclesSinceStopRequested
+    );
+    this.draw();
+    requestAnimationFrame(this.animateWithSlowdown.bind(this));
   },
 
   destroy() {
@@ -118,10 +135,19 @@ Wave.prototype = {
     ctx.fill();
   },
 
-  pause: function() {
+  pause: function(timeToStop = 0) {
     this.animating = false;
-    this.horizontalOffsetTime = this.getProgressPercentage() * this.speed;
-    this.startTime = null;
+
+    if (timeToStop > 0) {
+      this.cyclesSinceStopRequested = 0;
+      this.stopInitiatedTimestamp = this.timestamp();
+      this.stopCompletionTimestamp = this.stopInitiatedTimestamp + timeToStop;
+      this.animateWithSlowdown(timeToStop);
+    } else {
+      this.horizontalOffsetTime = this.getProgressPercentage() * this.speed;
+      this.startTime = null;
+      console.log(this);
+    }
   },
 
   resume: function() {
@@ -180,8 +206,10 @@ Wave.prototype = {
   /**
    * Update nodes based on current time
    */
-  updateNodes: function() {
-    let progress = this.getProgressRadians();
+  updateNodes: function(progress = null) {
+    if (!progress) {
+      progress = this.getProgressRadians();
+    }
 
     this.nodes.forEach(node => {
       // if (this.startFlat && progress < nodePositionMultiplier) {   node.y =
