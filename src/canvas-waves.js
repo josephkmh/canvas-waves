@@ -1,24 +1,32 @@
 import Wave from "./Wave";
 
-const CanvasWaves = () => {
-  const waves = [];
+function CanvasWaves() {
+  let waveCount = 0;
+  let waves = [];
 
-  this.clearAll = () => {
-    this.waves.forEach(wave => wave.destroy());
+  const deregister = id => {
+    let filtered = waves.filter(w => w.id !== id);
+    waves.length = 0;
+    [].push.apply(waves, filtered);
   };
 
-  this.wave = function(selector, options) {
+  const clearAll = () => {
+    waves.forEach(wave => wave.destroy());
+  };
+
+  const create = (selector, options) => {
     const wave = new Wave(selector, options);
-    wave.id = this.waves.length + 1;
-    wave.deregister = () => deregister(wave);
-    this.waves.push(wave);
+    wave.id = ++waveCount;
+    wave.deregister = () => deregister(wave.id);
+    waves.push(wave);
     return wave;
   };
 
   return {
-    create: CanvasWave,
-    all: waves
+    create,
+    all: waves,
+    clearAll
   };
-};
+}
 
-export default CanvasWaves();
+export default CanvasWaves;

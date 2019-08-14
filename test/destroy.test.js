@@ -12,12 +12,12 @@ describe("destroying a wave", () => {
     parent.style.height = "1000px";
     parent.style.position = "relative";
     document.body.appendChild(parent);
-    const wave = CanvasWaves.wave(".parent", {
+    const wave = CanvasWaves.create(".parent", {
       nodes: 5,
       test: true
     });
     wave.destroy();
     expect(parent.children.length).toEqual(0);
-    expect(CanvasWaves.waves.length).toEqual(0);
+    expect(CanvasWaves.all.length).toEqual(0);
   });
 });
