@@ -5,16 +5,15 @@
   "main": "dist/canvas-waves.node.js",
   "unpkg": "dist/canvas-waves.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "dev": "webpack --w"
   },
   "author": "Joey Marshment-Howell <joey@joeymh.com> (https://joeymh.com)",
   "license": "ISC",
   "devDependencies": {
     "jest": "^24.1.0",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
-  },
-  "dependencies": {
+    "webpack-cli": "^3.2.3",
     "canvas-prebuilt": "^2.0.0-alpha.14"
   }
 }

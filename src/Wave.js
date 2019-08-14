@@ -23,6 +23,7 @@ function Wave(
   this.color = color;
   this.horizontalOffsetTime = horizontalOffset * speed;
   this.speed = speed;
+  this.speedDecrementInterval = 10;
   this.startFlat = startFlat;
   this.startTime;
   this.waveAngleRadians = waveAngle * (Math.PI / 180);
@@ -73,7 +74,7 @@ Wave.prototype = {
    */
   animate: function() {
     // halt execution if animation has been turned off
-    if (this.animating == false) {
+    if (this.animating === false) {
       return;
     }
     this.animating = true;
@@ -81,7 +82,29 @@ Wave.prototype = {
     // update nodes, repaint canvas and request next animation frame
     this.updateNodes();
     this.draw();
+    if (this.isPaused) return;
     requestAnimationFrame(this.animate.bind(this));
+  },
+
+  animateWithSlowdown: function() {
+    let currentTime = this.timestamp();
+    if (currentTime > this.stopCompletionTimestamp) {
+      return;
+    }
+    this.horizontalOffsetTime = this.getProgressPercentage() * this.speed;
+    this.startTime = currentTime;
+    this.cyclesSinceStopRequested += 1;
+    this.updateNodes(
+      this.getProgressRadians() + 0.01 * this.cyclesSinceStopRequested
+    );
+    this.draw();
+    requestAnimationFrame(this.animateWithSlowdown.bind(this));
+  },
+
+  destroy() {
+    this.animating = false;
+    this.canvas.remove();
+    this.deregister();
   },
 
   /**
@@ -99,6 +122,26 @@ Wave.prototype = {
     ctx.lineTo(0, this.canvas.height);
     ctx.closePath();
     ctx.fill();
+  },
+
+  pause: function(timeToStop = 0) {
+    this.animating = false;
+
+    if (timeToStop > 0) {
+      this.cyclesSinceStopRequested = 0;
+      this.stopInitiatedTimestamp = this.timestamp();
+      this.stopCompletionTimestamp = this.stopInitiatedTimestamp + timeToStop;
+      this.animateWithSlowdown(timeToStop);
+    } else {
+      this.horizontalOffsetTime = this.getProgressPercentage() * this.speed;
+      this.startTime = null;
+      console.log(this);
+    }
+  },
+
+  resume: function() {
+    this.animating = true;
+    this.animate();
   },
 
   /**
