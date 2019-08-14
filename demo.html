@@ -16,14 +16,14 @@
 
   <script>
     window.addEventListener("load", () => {
-      const wave = CanvasWave(".demo--basic", {
+      const wave = CanvasWaves.create(".demo--basic", {
         opacity: 0.2,
         horizontalOffset: 0,
         waveHeight: "20%",
         baseHeight: "20%",
         waveGrows: 1
       });
-      console.log(wave);
+
       wave.draw();
       const waveToggle = document.querySelector(".wave__toggle1");
       wave.toggleAnimation();
@@ -31,14 +31,16 @@
         wave.toggleAnimation();
       });
 
-      const wave2 = CanvasWave(".demo--basic", {
-        opacity: 0.2,
+      const wave2 = CanvasWaves.create(".demo--basic", {
+        opacity: 0.3,
         horizontalOffset: 0,
-        speed: 6000,
+        color: "rgb(100,220,0)",
+        speed: 8000,
+        waveHeight: "20%",
         baseHeight: "20%",
         waveGrows: 1
       });
-      console.log(wave);
+
       wave2.draw();
       const waveToggle2 = document.querySelector(".wave__toggle2");
       waveToggle2.addEventListener("click", () => {

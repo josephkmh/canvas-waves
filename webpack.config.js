@@ -6,11 +6,11 @@ const serverConfig = {
   output: {
     filename: "canvas-waves.node.js",
     path: path.resolve(__dirname, "dist"),
-    library: "CanvasWave",
+    library: "CanvasWaves",
     libraryTarget: "umd"
   },
   mode: "development"
-}
+};
 
 const clientConfig = {
   entry: "./src/index.js",
@@ -18,10 +18,10 @@ const clientConfig = {
   output: {
     filename: "canvas-waves.js",
     path: path.resolve(__dirname, "dist"),
-    library: "CanvasWave",
+    library: "CanvasWaves",
     libraryTarget: "umd"
   },
   mode: "development"
-}
+};
 
 module.exports = [serverConfig, clientConfig];

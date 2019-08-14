@@ -13,12 +13,14 @@ function Wave(
     startFlat = false,
     opacity = 1,
     waveGrows = false,
-    waveHeight = "15%",
+    waveHeight = "50%",
     wavesVisible = 0.5,
     waveAngle = 0
   } = {}
 ) {
   this.animating = null;
+  this.baseHeight = baseHeight;
+  this.color = color;
   this.horizontalOffsetTime = horizontalOffset * speed;
   this.speed = speed;
   this.startFlat = startFlat;
