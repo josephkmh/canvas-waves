@@ -1,14 +1,7 @@
 const CanvasWaves = require("./../dist/canvas-waves.node.js");
-window.HTMLCanvasElement.prototype.getContext = () => {
-  return {
-    clearRect: () => {},
-    beginPath: () => {},
-    moveTo: () => {},
-    lineTo: () => {},
-    closePath: () => {},
-    fill: () => {}
-  };
-};
+
+// Mock window.canvas element properties that exists in a browser context
+window.HTMLCanvasElement.prototype.getContext = require("./__mockCanvas");
 
 describe("destroying a wave", () => {
   it("removes the canvas DOM node", () => {
