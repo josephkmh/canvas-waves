@@ -1,6 +1,6 @@
 {
   "name": "canvas-waves",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Generate animated waves on an HTML5 canvas",
   "main": "dist/canvas-waves.node.js",
   "unpkg": "dist/canvas-waves.js",
