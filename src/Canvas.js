@@ -1,5 +1,14 @@
-const Canvas = ({selector, gradient, color, opacity}) => {
-  const parent = document.querySelector(selector);
+const Canvas = ({ selector, gradient, color, opacity }) => {
+  let parent = undefined;
+
+  switch (typeof selector) {
+    case "string":
+      parent = document.querySelector(selector);
+      break;
+    case "object":
+      parent = selector;
+      break;
+  }
 
   if (!parent) {
     throw new Error("Parent element could not be found.");
@@ -38,6 +47,6 @@ const Canvas = ({selector, gradient, color, opacity}) => {
   }
 
   return canvas;
-}
+};
 
 export default Canvas;
